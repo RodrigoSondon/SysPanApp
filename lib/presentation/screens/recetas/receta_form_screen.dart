@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../data/repositories/receta_repository.dart';
 import '../../../data/models/receta_model.dart';
+import '../../../data/models/materia_prima_model.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../data/dummy_db.dart';
 
 class RecetaFormScreen extends StatefulWidget {
   final Receta? receta;
@@ -17,13 +18,13 @@ class RecetaFormScreen extends StatefulWidget {
 
 class _RecetaFormScreenState extends State<RecetaFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _repository = RecetaRepository();
   
   late TextEditingController _nombreController;
   late TextEditingController _pasosController;
   
   String _categoria = AppConstants.categoriaPanDulce;
   bool _isLoading = false;
+  List<IngredienteReceta> _ingredientes = [];
 
   @override
   void initState() {
@@ -33,6 +34,7 @@ class _RecetaFormScreenState extends State<RecetaFormScreen> {
     _nombreController = TextEditingController(text: receta?.nombre ?? '');
     _pasosController = TextEditingController(text: receta?.pasos ?? '');
     _categoria = receta?.categoria ?? AppConstants.categoriaPanDulce;
+    _ingredientes = List.from(receta?.ingredientes ?? []);
   }
 
   @override
@@ -46,47 +48,95 @@ class _RecetaFormScreenState extends State<RecetaFormScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
+    await Future.delayed(const Duration(milliseconds: 500)); // Simulate save
 
-    try {
-      final receta = Receta(
-        idreceta: widget.receta?.idreceta,
-        nombre: _nombreController.text.trim(),
-        categoria: _categoria,
-        pasos: _pasosController.text.trim().isEmpty 
-            ? null 
-            : _pasosController.text.trim(),
-      );
+    final receta = Receta(
+      idreceta: widget.receta?.idreceta ?? DateTime.now().millisecondsSinceEpoch,
+      nombre: _nombreController.text.trim(),
+      categoria: _categoria,
+      pasos: _pasosController.text.trim().isEmpty 
+          ? null 
+          : _pasosController.text.trim(),
+      ingredientes: _ingredientes,
+    );
 
-      if (widget.receta == null) {
-        await _repository.createReceta(receta);
-      } else {
-        await _repository.updateReceta(receta);
-      }
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              widget.receta == null ? 'Receta creada' : 'Receta actualizada',
-            ),
-          ),
-        );
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceAll('Exception: ', '')),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
+    if (widget.receta == null) {
+      DummyDb.instance.recetas.add(receta);
+    } else {
+      final index = DummyDb.instance.recetas.indexWhere((r) => r.idreceta == widget.receta!.idreceta);
+      if (index != -1) {
+        DummyDb.instance.recetas[index] = receta;
       }
     }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            widget.receta == null ? 'Receta creada' : 'Receta actualizada',
+          ),
+        ),
+      );
+      Navigator.pop(context, true);
+    }
+  }
+
+  void _mostrarDialogoIngrediente() {
+    MateriaPrima? seleccionada;
+    final cantidadCtrl = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Agregar Ingrediente'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<MateriaPrima>(
+                decoration: const InputDecoration(labelText: 'Materia Prima'),
+                items: DummyDb.instance.materiasPrimas.map((mp) {
+                  return DropdownMenuItem(value: mp, child: Text('${mp.nombre} (${mp.unidadmedida})'));
+                }).toList(),
+                onChanged: (val) => seleccionada = val,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: cantidadCtrl,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Cantidad Necesaria',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (seleccionada != null && cantidadCtrl.text.isNotEmpty) {
+                  final cant = double.tryParse(cantidadCtrl.text) ?? 1.0;
+                  setState(() {
+                    _ingredientes.add(IngredienteReceta(
+                      idreceta: widget.receta?.idreceta ?? 0,
+                      idmateriaprima: seleccionada!.idmateriaprima ?? 0,
+                      cantidadnecesaria: cant,
+                      nombreMateriaPrima: seleccionada!.nombre,
+                      unidadmedida: seleccionada!.unidadmedida,
+                    ));
+                  });
+                  Navigator.pop(ctx);
+                }
+              },
+              child: const Text('Agregar'),
+            ),
+          ],
+        );
+      }
+    );
   }
 
   @override
@@ -109,7 +159,7 @@ class _RecetaFormScreenState extends State<RecetaFormScreen> {
             const SizedBox(height: 16),
             
             DropdownButtonFormField<String>(
-              value: _categoria,
+              initialValue: _categoria,
               decoration: const InputDecoration(
                 labelText: 'Categoría',
                 prefixIcon: Icon(Icons.category),
@@ -129,6 +179,41 @@ class _RecetaFormScreenState extends State<RecetaFormScreen> {
               prefixIcon: Icons.list_alt,
               maxLines: 5,
             ),
+            const SizedBox(height: 24),
+            
+            // Sección de Ingredientes
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Ingredientes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                TextButton.icon(
+                  onPressed: _mostrarDialogoIngrediente,
+                  icon: const Icon(Icons.add),
+                  label: const Text('Agregar'),
+                )
+              ],
+            ),
+            const Divider(),
+            if (_ingredientes.isEmpty)
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text('No hay ingredientes agregados', style: TextStyle(color: Colors.grey)),
+              ),
+            ..._ingredientes.map((ing) {
+              return ListTile(
+                title: Text(ing.nombreMateriaPrima ?? 'Desconocido'),
+                subtitle: Text('${ing.cantidadnecesaria} ${ing.unidadmedida ?? ''}'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    setState(() {
+                      _ingredientes.remove(ing);
+                    });
+                  },
+                ),
+              );
+            }),
+            
             const SizedBox(height: 32),
             
             CustomButton(

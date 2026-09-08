@@ -3,7 +3,6 @@ import '../../../data/repositories/usuario_repository.dart';
 import '../../../data/models/usuario_model.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../core/widgets/error_display.dart';
-import '../../../core/theme/app_theme.dart';
 import 'usuario_form_screen.dart';
 
 class UsuariosScreen extends StatefulWidget {
@@ -32,15 +31,21 @@ class _UsuariosScreenState extends State<UsuariosScreen> {
       _error = null;
     });
 
-    try {
-      final usuarios = await _repository.getAllUsuarios();
+    // Simulate network delay
+    await Future.delayed(const Duration(milliseconds: 800));
+
+    // Dummy data
+    final dummyData = [
+      Usuario(idusuario: 1, nombre: 'Admin Dueño', correo: 'admin@syspan.com', rol: 'Administrador'),
+      Usuario(idusuario: 2, nombre: 'Juan Panadero', correo: 'juan@syspan.com', rol: 'Panadero'),
+      Usuario(idusuario: 3, nombre: 'María Vendedor 1', correo: 'maria@syspan.com', rol: 'Vendedor'),
+      Usuario(idusuario: 4, nombre: 'Pedro Vendedor 2', correo: 'pedro@syspan.com', rol: 'Vendedor'),
+      Usuario(idusuario: 5, nombre: 'Luis Repartidor', correo: 'luis@syspan.com', rol: 'Cliente'), // Or another role
+    ];
+
+    if (mounted) {
       setState(() {
-        _usuarios = usuarios;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString().replaceAll('Exception: ', '');
+        _usuarios = dummyData;
         _isLoading = false;
       });
     }
@@ -99,24 +104,13 @@ class _UsuariosScreenState extends State<UsuariosScreen> {
     );
 
     if (confirm == true && mounted) {
-      try {
-        await _repository.deleteUsuario(usuario.idusuario!);
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Usuario eliminado')),
-          );
-          _loadUsuarios();
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(e.toString().replaceAll('Exception: ', '')),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-        }
-      }
+      // Dummy delete
+      setState(() {
+        _usuarios.removeWhere((u) => u.idusuario == usuario.idusuario);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Usuario eliminado')),
+      );
     }
   }
 
@@ -190,8 +184,8 @@ class _UsuariosScreenState extends State<UsuariosScreen> {
             _loadUsuarios();
           }
         },
-        child: const Icon(Icons.add),
         tooltip: 'Nuevo Usuario',
+        child: const Icon(Icons.add),
       ),
       body: _isLoading
           ? const LoadingIndicator(message: 'Cargando usuarios...')

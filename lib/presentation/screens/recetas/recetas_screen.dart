@@ -8,6 +8,8 @@ import '../../../core/theme/app_theme.dart';
 import 'receta_detail_screen.dart';
 import 'receta_form_screen.dart';
 
+import '../../../data/dummy_db.dart';
+
 class RecetasScreen extends StatefulWidget {
   const RecetasScreen({super.key});
 
@@ -36,16 +38,16 @@ class _RecetasScreenState extends State<RecetasScreen> {
       _error = null;
     });
 
-    try {
-      final data = await _repository.getRecetas();
+    // Simulate network delay
+    await Future.delayed(const Duration(milliseconds: 800));
+
+    // Dummy data
+    final dummyData = DummyDb.instance.recetas;
+
+    if (mounted) {
       setState(() {
-        _recetas = data;
+        _recetas = dummyData;
         _applyFilters();
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString().replaceAll('Exception: ', '');
         _isLoading = false;
       });
     }

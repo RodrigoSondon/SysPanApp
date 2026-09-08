@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import '../../../data/services/auth_service.dart';
 import '../../../data/models/usuario_model.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../app/presentation/global/colors.dart';
 import '../auth/login_screen.dart';
 import '../inventario/inventario_screen.dart';
 import '../recetas/recetas_screen.dart';
 import '../produccion/produccion_screen.dart';
-import '../pedidos/pedidos_screen.dart';
+import '../punto_venta/punto_venta_screen.dart';
 import '../reportes/reportes_screen.dart';
 import '../usuarios/usuarios_screen.dart';
 
@@ -77,8 +78,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     items.add(_DashboardItem(
       title: 'Inventario',
       subtitle: 'Materias primas',
-      icon: Icons.inventory_2,
-      color: Colors.blue,
+      icon: Icons.inventory_2_outlined,
+      color: AppColors.secondary,
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const InventarioScreen()),
@@ -89,8 +90,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     items.add(_DashboardItem(
       title: 'Recetas',
       subtitle: 'Recetario digital',
-      icon: Icons.menu_book,
-      color: Colors.orange,
+      icon: Icons.menu_book_outlined,
+      color: AppColors.primary,
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const RecetasScreen()),
@@ -103,8 +104,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       items.add(_DashboardItem(
         title: 'Producción',
         subtitle: 'Control diario',
-        icon: Icons.factory,
-        color: Colors.green,
+        icon: Icons.factory_outlined,
+        color: AppColors.success,
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const ProduccionScreen()),
@@ -112,16 +113,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ));
     }
 
-    // Pedidos - Todos excepto Cliente
+    // Punto de Venta - Todos excepto Cliente
     if (userRole != AppConstants.rolCliente) {
       items.add(_DashboardItem(
-        title: 'Pedidos',
-        subtitle: 'Gestión de pedidos',
-        icon: Icons.shopping_cart,
-        color: Colors.purple,
+        title: 'Punto de Venta',
+        subtitle: 'Caja y mostrador',
+        icon: Icons.point_of_sale_outlined,
+        color: const Color(0xFF9C27B0),
         onTap: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const PedidosScreen()),
+          MaterialPageRoute(builder: (_) => const PuntoVentaScreen()),
         ),
       ));
     }
@@ -132,8 +133,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       items.add(_DashboardItem(
         title: 'Reportes',
         subtitle: 'Análisis y estadísticas',
-        icon: Icons.analytics,
-        color: Colors.teal,
+        icon: Icons.analytics_outlined,
+        color: const Color(0xFF00BCD4),
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const ReportesScreen()),
@@ -146,8 +147,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       items.add(_DashboardItem(
         title: 'Usuarios',
         subtitle: 'Gestión de usuarios',
-        icon: Icons.people,
-        color: Colors.red,
+        icon: Icons.people_outline,
+        color: AppColors.error,
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const UsuariosScreen()),
@@ -169,101 +170,209 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final dashboardItems = _getDashboardItems();
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('SysPan'),
+        title: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.bakery_dining,
+                size: 20,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'PanSys',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Administrador',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout_outlined),
             onPressed: _handleLogout,
             tooltip: 'Cerrar Sesión',
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Welcome Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // User Welcome Section
+                Row(
                   children: [
                     CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      radius: 24,
+                      backgroundColor: AppColors.primary,
                       child: Text(
                         (_currentUser?.nombre.isNotEmpty == true) 
                             ? _currentUser!.nombre.substring(0, 1).toUpperCase() 
                             : 'U',
                         style: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Bienvenido,',
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            _currentUser?.nombre ?? 'Usuario',
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           Text(
-                            _currentUser?.nombre ?? 'Usuario',
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black87, width: 1),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Text(
-                              _currentUser?.rol ?? '',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.black87,
-                              ),
-                            ),
+                            _currentUser?.email ?? '',
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
                       ),
                     ),
                   ],
                 ),
-              ),
+                const SizedBox(height: 24),
+
+                // Panel General Title
+                Text(
+                  'Panel General',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Resumen del día',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 16),
+                
+                // Stats Cards - Responsive Grid
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Use 4 columns on larger screens, 2 on smaller
+                    final crossAxisCount = constraints.maxWidth > 600 ? 4 : 2;
+                    return GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: crossAxisCount == 4 ? 1.2 : 1.5,
+                      children: [
+                        _StatCard(
+                          title: 'Ventas Hoy',
+                          value: '\$8,450',
+                          icon: Icons.attach_money,
+                          color: AppColors.success,
+                        ),
+                        _StatCard(
+                          title: 'Ganancias Netas',
+                          value: '\$4,620',
+                          icon: Icons.trending_up,
+                          color: AppColors.secondary,
+                        ),
+                        _StatCard(
+                          title: 'Productos Activos',
+                          value: '24',
+                          icon: Icons.shopping_bag_outlined,
+                          color: AppColors.primary,
+                        ),
+                        _StatCard(
+                          title: 'Usuarios',
+                          value: '8',
+                          icon: Icons.people_outline,
+                          color: const Color(0xFF9C27B0),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+                
+                // Alert Banners
+                _AlertBanner(
+                  message: 'Levadura Seca - Stock bajo (<5kg)',
+                  icon: Icons.warning_amber_rounded,
+                  color: AppColors.warning,
+                ),
+                const SizedBox(height: 12),
+                _AlertBanner(
+                  message: 'Recordatorio: Registrar ventas al cierre del turno',
+                  icon: Icons.info_outline,
+                  color: AppColors.info,
+                ),
+                const SizedBox(height: 24),
+                
+                // Modules Section
+                Text(
+                  'Módulos',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                
+                // Modules Grid - Responsive
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Use more columns on larger screens
+                    final crossAxisCount = constraints.maxWidth > 900 
+                        ? 4 
+                        : constraints.maxWidth > 600 
+                            ? 3 
+                            : 2;
+                    return GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        childAspectRatio: 1.3,
+                      ),
+                      itemCount: dashboardItems.length,
+                      itemBuilder: (context, index) {
+                        final item = dashboardItems[index];
+                        return _DashboardCard(item: item);
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
-            
-            // Dashboard Grid
-            Text(
-              'Módulos',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 16),
-            
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.2,
-              ),
-              itemCount: dashboardItems.length,
-              itemBuilder: (context, index) {
-                final item = dashboardItems[index];
-                return _DashboardCard(item: item);
-              },
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -286,6 +395,112 @@ class _DashboardItem {
   });
 }
 
+class _StatCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const _StatCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.bodySmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 18,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              value,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AlertBanner extends StatelessWidget {
+  final String message;
+  final IconData icon;
+  final Color color;
+
+  const _AlertBanner({
+    required this.message,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: color,
+            size: 20,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              message,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _DashboardCard extends StatelessWidget {
   final _DashboardItem item;
 
@@ -294,7 +509,6 @@ class _DashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2,
       child: InkWell(
         onTap: item.onTap,
         borderRadius: BorderRadius.circular(12),
@@ -303,15 +517,24 @@ class _DashboardCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                item.icon,
-                size: 48,
-                color: item.color,
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: item.color,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  item.icon,
+                  size: 32,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(height: 12),
               Text(
                 item.title,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 4),

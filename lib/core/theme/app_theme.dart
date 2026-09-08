@@ -1,150 +1,150 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../app/presentation/global/colors.dart';
 
 class AppTheme {
-  // Color Palette - Warm bakery theme
-  static const Color primaryColor = Color(0xFFD4A574); // Warm golden brown
-  static const Color secondaryColor = Color(0xFF8B4513); // Saddle brown
-  static const Color accentColor = Color(0xFFFFA726); // Warm orange
-  static const Color backgroundColor = Color(0xFFFAF8F5); // Cream
-  static const Color surfaceColor = Color(0xFFFFFFFF); // White
-  static const Color errorColor = Color(0xFFD32F2F); // Red
-  static const Color successColor = Color(0xFF388E3C); // Green
-  static const Color warningColor = Color(0xFFFFA000); // Amber
-  static const Color infoColor = Color(0xFF1976D2); // Blue
-  
-  // Text Colors
-  static const Color textPrimary = Color(0xFF212121);
-  static const Color textSecondary = Color(0xFF757575);
-  static const Color textHint = Color(0xFFBDBDBD);
-  
   // Light Theme
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.light(
-        primary: primaryColor,
-        secondary: secondaryColor,
-        tertiary: accentColor,
-        surface: surfaceColor,
-        error: errorColor,
-        onPrimary: Colors.white,
-        onSecondary: Colors.white,
-        onSurface: textPrimary,
-        onError: Colors.white,
+        primary: AppColors.primary,
+        secondary: AppColors.secondary,
+        tertiary: AppColors.primaryLight,
+        surface: AppColors.surface,
+        error: AppColors.error,
+        onPrimary: AppColors.textOnPrimary,
+        onSecondary: AppColors.textOnPrimary,
+        onSurface: AppColors.textPrimary,
+        onError: AppColors.textOnPrimary,
       ),
-      scaffoldBackgroundColor: backgroundColor,
+      scaffoldBackgroundColor: AppColors.background,
       
       // Typography
       textTheme: GoogleFonts.poppinsTextTheme().copyWith(
         displayLarge: GoogleFonts.poppins(
           fontSize: 32,
           fontWeight: FontWeight.bold,
-          color: textPrimary,
+          color: AppColors.textPrimary,
         ),
         displayMedium: GoogleFonts.poppins(
           fontSize: 28,
           fontWeight: FontWeight.bold,
-          color: textPrimary,
+          color: AppColors.textPrimary,
         ),
         displaySmall: GoogleFonts.poppins(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-          color: textPrimary,
+          color: AppColors.textPrimary,
         ),
         headlineMedium: GoogleFonts.poppins(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: textPrimary,
+          color: AppColors.textPrimary,
         ),
         headlineSmall: GoogleFonts.poppins(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: textPrimary,
+          color: AppColors.textPrimary,
         ),
         titleLarge: GoogleFonts.poppins(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: textPrimary,
+          color: AppColors.textPrimary,
         ),
         titleMedium: GoogleFonts.poppins(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          color: textPrimary,
+          color: AppColors.textPrimary,
         ),
         bodyLarge: GoogleFonts.poppins(
           fontSize: 16,
           fontWeight: FontWeight.normal,
-          color: textPrimary,
+          color: AppColors.textPrimary,
         ),
         bodyMedium: GoogleFonts.poppins(
           fontSize: 14,
           fontWeight: FontWeight.normal,
-          color: textPrimary,
+          color: AppColors.textPrimary,
         ),
         bodySmall: GoogleFonts.poppins(
           fontSize: 12,
           fontWeight: FontWeight.normal,
-          color: textSecondary,
+          color: AppColors.textSecondary,
         ),
         labelLarge: GoogleFonts.poppins(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          color: textPrimary,
+          color: AppColors.textPrimary,
         ),
       ),
       
       // AppBar Theme
       appBarTheme: AppBarTheme(
         elevation: 0,
-        centerTitle: true,
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
+        centerTitle: false,
+        backgroundColor: AppColors.surface,
+        foregroundColor: AppColors.textPrimary,
+        surfaceTintColor: Colors.transparent,
         titleTextStyle: GoogleFonts.poppins(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: Colors.white,
+          color: AppColors.textPrimary,
+        ),
+        iconTheme: const IconThemeData(
+          color: AppColors.textPrimary,
         ),
       ),
       
       // Card Theme
-      cardTheme: const CardThemeData(
-        elevation: 2,
+      cardTheme: CardThemeData(
+        elevation: 1,
+        shadowColor: AppColors.shadow,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderRadius: BorderRadius.circular(12),
         ),
-        color: surfaceColor,
+        color: AppColors.surface,
+        surfaceTintColor: Colors.transparent,
       ),
       
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surfaceColor,
+        fillColor: AppColors.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: primaryColor, width: 2),
+          borderSide: const BorderSide(color: AppColors.secondary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: errorColor),
+          borderSide: const BorderSide(color: AppColors.error),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        hintStyle: GoogleFonts.poppins(
+          color: AppColors.textHint,
+          fontSize: 14,
+        ),
       ),
       
       // Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
-          elevation: 2,
+          backgroundColor: AppColors.secondary,
+          foregroundColor: AppColors.textOnPrimary,
+          elevation: 0,
+          shadowColor: Colors.transparent,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -159,8 +159,8 @@ class AppTheme {
       // Outlined Button Theme
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: primaryColor,
-          side: const BorderSide(color: primaryColor, width: 2),
+          foregroundColor: AppColors.error,
+          side: const BorderSide(color: AppColors.error, width: 1.5),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -175,7 +175,7 @@ class AppTheme {
       // Text Button Theme
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: primaryColor,
+          foregroundColor: AppColors.secondary,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           textStyle: GoogleFonts.poppins(
             fontSize: 14,
@@ -186,18 +186,19 @@ class AppTheme {
       
       // Floating Action Button Theme
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: accentColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.secondary,
+        foregroundColor: AppColors.textOnPrimary,
         elevation: 4,
       ),
       
       // Chip Theme
       chipTheme: ChipThemeData(
-        backgroundColor: primaryColor.withOpacity(0.1),
+        backgroundColor: AppColors.border,
+        selectedColor: AppColors.secondary,
         labelStyle: GoogleFonts.poppins(
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: FontWeight.w500,
-          color: primaryColor,
+          color: AppColors.textPrimary,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         shape: RoundedRectangleBorder(
@@ -207,7 +208,7 @@ class AppTheme {
       
       // Divider Theme
       dividerTheme: const DividerThemeData(
-        color: Color(0xFFE0E0E0),
+        color: AppColors.border,
         thickness: 1,
         space: 1,
       ),
@@ -218,38 +219,40 @@ class AppTheme {
   static Color getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'pendiente':
-        return warningColor;
+        return AppColors.warning;
       case 'en proceso':
-        return infoColor;
+        return AppColors.info;
       case 'entregado':
       case 'completado':
-        return successColor;
+        return AppColors.success;
       default:
-        return textSecondary;
+        return AppColors.textSecondary;
     }
   }
   
   static Color getPriorityColor(String priority) {
     switch (priority.toLowerCase()) {
       case 'urgente':
-        return errorColor;
+        return AppColors.error;
       case 'normal':
-        return infoColor;
+        return AppColors.info;
       default:
-        return textSecondary;
+        return AppColors.textSecondary;
     }
   }
   
   static Color getCategoryColor(String category) {
-    switch (category.toLowerCase()) {
-      case 'pan dulce':
-        return const Color(0xFFE91E63); // Pink
-      case 'pan salado':
-        return const Color(0xFFFF9800); // Orange
-      case 'pastel':
-        return const Color(0xFF9C27B0); // Purple
-      default:
-        return primaryColor;
-    }
+    final categoryLower = category.toLowerCase();
+    if (categoryLower.contains('harina')) return AppColors.categoryHarina;
+    if (categoryLower.contains('azucar') || categoryLower.contains('azúcar')) return AppColors.categoryAzucar;
+    if (categoryLower.contains('levadura')) return AppColors.categoryLevadura;
+    if (categoryLower.contains('mantequilla')) return AppColors.categoryMantequilla;
+    if (categoryLower.contains('sal')) return AppColors.categorySal;
+    if (categoryLower.contains('huevo')) return AppColors.categoryHuevos;
+    return AppColors.categoryOther;
+  }
+  
+  static Color getMateriaPrimaColor(String nombre) {
+    return getCategoryColor(nombre);
   }
 }

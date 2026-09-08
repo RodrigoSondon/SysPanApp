@@ -161,7 +161,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
             
             // Rol
             DropdownButtonFormField<String>(
-              value: _rol,
+              initialValue: _rol,
               decoration: const InputDecoration(
                 labelText: 'Rol',
                 prefixIcon: Icon(Icons.admin_panel_settings),

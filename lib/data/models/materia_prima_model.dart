@@ -6,6 +6,8 @@ class MateriaPrima {
   final String? proveedor;
   final DateTime? fechacaducidad;
   final double cantidadminima;
+  final double? costoporkilo;
+  final String? categoria;
 
   MateriaPrima({
     this.idmateriaprima,
@@ -15,6 +17,8 @@ class MateriaPrima {
     this.proveedor,
     this.fechacaducidad,
     required this.cantidadminima,
+    this.costoporkilo,
+    this.categoria,
   });
 
   factory MateriaPrima.fromJson(Map<String, dynamic> json) {
@@ -28,6 +32,8 @@ class MateriaPrima {
           ? DateTime.parse(json['fechacaducidad'] as String)
           : null,
       cantidadminima: (json['cantidadminima'] as num?)?.toDouble() ?? 0.0,
+      costoporkilo: (json['costoporkilo'] as num?)?.toDouble(),
+      categoria: json['categoria'] as String?,
     );
   }
 
@@ -51,6 +57,14 @@ class MateriaPrima {
       data['fechacaducidad'] = fechacaducidad!.toIso8601String().split('T')[0];
     }
     
+    if (costoporkilo != null) {
+      data['costoporkilo'] = costoporkilo;
+    }
+    
+    if (categoria != null) {
+      data['categoria'] = categoria;
+    }
+    
     return data;
   }
 
@@ -62,6 +76,8 @@ class MateriaPrima {
     String? proveedor,
     DateTime? fechacaducidad,
     double? cantidadminima,
+    double? costoporkilo,
+    String? categoria,
   }) {
     return MateriaPrima(
       idmateriaprima: idmateriaprima ?? this.idmateriaprima,
@@ -71,11 +87,19 @@ class MateriaPrima {
       proveedor: proveedor ?? this.proveedor,
       fechacaducidad: fechacaducidad ?? this.fechacaducidad,
       cantidadminima: cantidadminima ?? this.cantidadminima,
+      costoporkilo: costoporkilo ?? this.costoporkilo,
+      categoria: categoria ?? this.categoria,
     );
   }
   
   // Helper methods
   bool get isBajoStock => cantidaddisponible <= cantidadminima;
+  
+  // Alias for compatibility
+  double get stockminimo => cantidadminima;
+  
+  // Computed property for total cost
+  double get totalCost => (costoporkilo ?? 0.0) * cantidaddisponible;
   
   bool get isExpired {
     if (fechacaducidad == null) return false;

@@ -144,7 +144,7 @@ class _MateriaPrimaFormScreenState extends State<MateriaPrimaFormScreen> {
             const SizedBox(height: 16),
             
             DropdownButtonFormField<String>(
-              value: _unidadMedida,
+              initialValue: _unidadMedida,
               decoration: const InputDecoration(
                 labelText: 'Unidad de Medida',
                 prefixIcon: Icon(Icons.straighten),

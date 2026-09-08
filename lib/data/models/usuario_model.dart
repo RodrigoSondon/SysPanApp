@@ -56,4 +56,7 @@ class Usuario {
       rol: rol ?? this.rol,
     );
   }
+  
+  // Alias for compatibility
+  String get email => correo;
 }
